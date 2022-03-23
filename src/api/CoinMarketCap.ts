@@ -11,7 +11,6 @@ const getArrCoinMarketCap = async () => {
     .get(endPoints, { headers })
     .then(resp => {
       const dataCoins = resp.data.data;
-      // console.log(dataCoins);
       return dataCoins.reduce((acc, el, i) => {
         acc.push({
           shop_name: 'coinMarketCap',
