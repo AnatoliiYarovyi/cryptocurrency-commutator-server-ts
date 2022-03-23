@@ -32,5 +32,5 @@ export class Coin {
   @Column({
     type: 'timestamp',
   })
-  date: any;
+  date: string;
 }
