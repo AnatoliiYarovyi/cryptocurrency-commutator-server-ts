@@ -1,6 +1,9 @@
 import { Coin } from '../entity/Coin';
+import { EntityManager } from 'typeorm';
 
-const writeData = async (manager, data) => {
+import Obj from '../interface/interface';
+
+const writeData = async (manager: EntityManager, data: Obj) => {
   try {
     const {
       name,
