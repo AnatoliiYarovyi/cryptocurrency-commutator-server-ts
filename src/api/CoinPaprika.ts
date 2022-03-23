@@ -22,5 +22,4 @@ const getArrCoinPaprika = async () => {
   return resData;
 };
 
-// getArrCoinPaprika().then(data => console.log(data));
 export default getArrCoinPaprika;
