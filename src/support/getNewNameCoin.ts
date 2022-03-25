@@ -1,27 +1,38 @@
-import axios from 'axios';
-import fs from 'fs/promises';
+import axios, { AxiosResponse } from 'axios';
+import * as fs from 'fs/promises';
+import * as path from 'path';
 
-const endPoints =
+interface ArrCryptos {
+  id: number;
+  name: string;
+  symbol: string;
+}
+interface DataCoins {
+  name: string;
+  symbol: string;
+}
+
+const endPoints: string =
   'https://api.coinstats.app/public/v1/coins?limit=20&currency=USD';
 
 async function getNewNameCoin() {
   try {
-    const arrCryptos = await getArrCryptos(endPoints);
-    const stringData = await JSON.stringify(arrCryptos);
+    const arrCryptos: ArrCryptos[] = await getArrCryptos(endPoints);
+    const stringData: string = JSON.stringify(arrCryptos);
 
-    const pathFile = __dirname + 'dbNameCoin.json';
-
+    const pathFile: string = path.join(__dirname, 'dbNameCoin.json');
     await fs.writeFile(pathFile, stringData);
-    console.log(`Data save in "dbNameCoin.json"`);
+    console.log(`Data save`);
   } catch (error) {
     console.log(error);
   }
 }
 
-const getArrCryptos = async endPoints => {
-  return await Promise.all(
-    await axios.get(endPoints).then(resp => {
-      const dataCoins = resp.data.coins;
+const getArrCryptos = async (endPoints: string) => {
+  const resData: ArrCryptos[] = await axios
+    .get(endPoints)
+    .then((resp: AxiosResponse) => {
+      const dataCoins: DataCoins[] = resp.data.coins;
       return dataCoins.reduce((acc, el, i) => {
         acc.push({
           id: i + 1,
@@ -30,8 +41,8 @@ const getArrCryptos = async endPoints => {
         });
         return acc;
       }, []);
-    }),
-  );
+    });
+  return resData;
 };
 
 getNewNameCoin();
