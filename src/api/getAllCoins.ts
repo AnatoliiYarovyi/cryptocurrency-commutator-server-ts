@@ -4,14 +4,17 @@ import getArrCoinStats from './CoinStats';
 import getArrKucoin from './Kucoin';
 import getArrCoinPaprika from './Coinpaprika';
 
+import { DetailsCoin } from '../interface/interface';
+
 const getAllCoins = async () => {
   try {
-    const arrCoinMarketCap = await getArrCoinMarketCap();
-    const arrCoinBase = await getCoinBase();
-    const arrCoinStats = await getArrCoinStats();
-    const arrKucoin = await getArrKucoin();
-    const arrArrCoinPaprika = await getArrCoinPaprika();
-    const allCoins = arrCoinMarketCap.concat(
+    const arrCoinMarketCap: DetailsCoin[] = await getArrCoinMarketCap();
+    const arrCoinBase: DetailsCoin[] = await getCoinBase();
+    const arrCoinStats: DetailsCoin[] = await getArrCoinStats();
+    const arrKucoin: DetailsCoin[] = await getArrKucoin();
+    const arrArrCoinPaprika: DetailsCoin[] = await getArrCoinPaprika();
+
+    const allCoins: DetailsCoin[] = arrCoinMarketCap.concat(
       arrCoinBase,
       arrCoinStats,
       arrKucoin,
