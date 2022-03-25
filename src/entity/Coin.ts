@@ -6,10 +6,10 @@ export class Coin {
   id: number;
 
   @Column({ type: 'varchar', length: 50 })
-  cryptocurrensy_name: string;
+  cryptocurrensyName: string;
 
   @Column({ type: 'varchar', length: 20 })
-  cryptocurrensy_symbol: string;
+  cryptocurrensySymbol: string;
 
   @Column({ type: 'numeric', precision: 22, scale: 15, nullable: true })
   coinMarketCap: number;
@@ -27,7 +27,7 @@ export class Coin {
   coinPaprika: number;
 
   @Column({ type: 'numeric', precision: 22, scale: 15, nullable: true })
-  price_average: number;
+  priceAverage: number;
 
   @Column({
     type: 'timestamp',
