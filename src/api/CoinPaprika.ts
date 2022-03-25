@@ -1,16 +1,27 @@
-import axios from 'axios';
+import axios, { AxiosResponse } from 'axios';
 
-const endPoints = 'https://api.coinpaprika.com/v1/tickers';
+import { DetailsCoin } from '../interface/interface';
+interface DataCoins {
+  name: string;
+  symbol: string;
+  quotes: {
+    USD: {
+      price: number;
+    };
+  };
+}
+
+const endPoints: string = 'https://api.coinpaprika.com/v1/tickers';
 
 const getArrCoinPaprika = async () => {
-  const resData = await axios
+  const resData: DetailsCoin[] = await axios
     .get(endPoints)
-    .then(resp => {
-      const dataCoins = resp.data;
+    .then((resp: AxiosResponse) => {
+      const dataCoins: DataCoins[] = resp.data;
       return dataCoins.reduce((acc, el, i) => {
         acc.push({
-          shop_name: 'coinPaprika',
-          list_number: i + 1,
+          shopName: 'coinPaprika',
+          listNumber: i + 1,
           name: el.name,
           symbol: el.symbol,
           price: el.quotes.USD.price || null,
@@ -18,7 +29,7 @@ const getArrCoinPaprika = async () => {
         return acc;
       }, []);
     })
-    .catch(error => console.log(error));
+    .catch(error => console.error(error));
   return resData;
 };
 
