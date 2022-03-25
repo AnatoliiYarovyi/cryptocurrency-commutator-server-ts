@@ -41,7 +41,7 @@ const index = express();
 index.use(express.json());
 
 // start "cron" --> requests happen every 5 minutes
-const interval: number = 1;
+const interval: number = 5;
 cron.schedule(`*/${interval} * * * *`, async () => {
   try {
     console.log('start "cron"');
