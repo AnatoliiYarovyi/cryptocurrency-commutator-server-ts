@@ -1,17 +1,28 @@
+import { Repository } from 'typeorm';
+
+interface DataCoin {
+  cryptocurrensySymbol: string;
+  priceAverage: string;
+}
+interface Data {
+  symbol: string;
+  price: number;
+}
+
 const queryCoin = async (
-  userRepository,
-  symbolCoin,
-  shopCoin: any = 'price_average',
-  limit = 12,
+  userRepository: Repository<any>,
+  symbolCoin: any,
+  shopCoin: any = 'priceAverage',
+  limit: number = 12,
 ) => {
   try {
-    const dataCoin = await userRepository.find({
+    const dataCoin: DataCoin[] = await userRepository.find({
       select: {
-        cryptocurrensy_symbol: true,
-        price_average: true,
+        cryptocurrensySymbol: true,
+        priceAverage: true,
       },
       where: {
-        cryptocurrensy_symbol: symbolCoin,
+        cryptocurrensySymbol: symbolCoin,
       },
       order: {
         id: 'DESC',
@@ -19,20 +30,20 @@ const queryCoin = async (
       take: limit,
     });
 
-    let sumPrice = null;
-    let number = null;
-    const data = dataCoin.reduce((acc, el, i, arr) => {
-      const { cryptocurrensy_symbol, price_average } = el;
+    let sumPrice: number = null;
+    let number: number = null;
+    const data: Data[] = dataCoin.reduce((acc, el, i, arr) => {
+      const { cryptocurrensySymbol, priceAverage } = el;
 
-      if (price_average) {
-        sumPrice += Number(price_average);
+      if (priceAverage) {
+        sumPrice += Number(priceAverage);
         ++number;
       }
       if (i === arr.length - 1) {
-        acc = {
-          symbol: cryptocurrensy_symbol,
+        acc.push({
+          symbol: cryptocurrensySymbol,
           price: sumPrice / number,
-        };
+        });
       }
       return acc;
     }, []);
