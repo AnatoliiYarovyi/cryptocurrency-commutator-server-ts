@@ -1,20 +1,32 @@
-import axios from 'axios';
+import axios, { AxiosResponse } from 'axios';
 
-const endPoints =
+import { Obj, DetailsCoin } from '../interface/interface';
+interface DataCoins {
+  id: number;
+  name: string;
+  symbol: string;
+  quote: {
+    USD: {
+      price: number;
+    };
+  };
+}
+
+const endPoints: string =
   'https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest';
-const headers = {
+const headers: Obj = {
   'X-CMC_PRO_API_KEY': '39ac0feb-d618-47b4-8607-59ea6df21e06',
 };
 
 const getArrCoinMarketCap = async () => {
-  const resData = await axios
+  const resData: DetailsCoin[] = await axios
     .get(endPoints, { headers })
-    .then(resp => {
-      const dataCoins = resp.data.data;
+    .then((resp: AxiosResponse) => {
+      const dataCoins: DataCoins[] = resp.data.data;
       return dataCoins.reduce((acc, el, i) => {
         acc.push({
-          shop_name: 'coinMarketCap',
-          list_number: i + 1,
+          shopName: 'coinMarketCap',
+          listNumber: i + 1,
           name: el.name,
           symbol: el.symbol,
           price: el.quote.USD.price,
