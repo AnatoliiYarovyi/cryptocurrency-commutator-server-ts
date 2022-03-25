@@ -1,9 +1,14 @@
+interface Data {
+  cryptocurrensySymbol: string;
+  priceAverage: string;
+}
+
 const queryAllCoin = async userRepository => {
   try {
-    const data = await userRepository.find({
+    const data: Data[] = await userRepository.find({
       select: {
-        cryptocurrensy_symbol: true,
-        price_average: true,
+        cryptocurrensySymbol: true,
+        priceAverage: true,
       },
       order: {
         id: 'DESC',
