@@ -3,12 +3,20 @@ import * as path from 'path';
 
 import getAllCoins from '../api/getAllCoins';
 
+import { AllPriceCoin, DetailsCoin } from '../interface/interface';
+
+interface NameCoins {
+  id: number;
+  name: string;
+  symbol: string;
+}
+
 const getCurrentPrice = async () => {
   try {
-    const nameCoins = await getNameCoins(); // reading from the file the "name" of the desired bitcoins
-    const arrAllCoins = await getAllCoins(); // get an array of objects from all markets
-    const price = getPrice(nameCoins, arrAllCoins); // find current prices
-    console.log('price', price);
+    const nameCoins: NameCoins[] = await getNameCoins(); // reading from the file the "name" of the desired bitcoins
+    const arrAllCoins: DetailsCoin[] = await getAllCoins(); // get an array of objects from all markets
+    const price: AllPriceCoin[] = getPrice(nameCoins, arrAllCoins); // find current prices
+    // console.log('price', price);
     return price;
   } catch (error) {
     console.log(error);
@@ -18,10 +26,10 @@ const getCurrentPrice = async () => {
 // reading from the file the "name" of the desired bitcoins
 const getNameCoins = async () => {
   try {
-    const filesPath = path.join(__dirname, 'dbNameCoin.json');
+    const filesPath: string = path.join(__dirname, 'dbNameCoin.json');
 
     const data = await fs.readFile(filesPath).then(async dataNameCoin => {
-      const dataPars = await JSON.parse(dataNameCoin.toString());
+      const dataPars: NameCoins[] = await JSON.parse(dataNameCoin.toString());
       return dataPars;
     });
     return data;
@@ -31,10 +39,14 @@ const getNameCoins = async () => {
 };
 
 // find current prices
-const getPrice = (nameCoins, arrAllCoins) => {
-  return nameCoins.reduce((acc, el) => {
-    const findCoin = arrAllCoins.filter(({ name, symbol }) => {
-      return name === el.name || symbol === el.symbol;
+const getPrice = (nameCoins: NameCoins[], arrAllCoins: DetailsCoin[]) => {
+  const allPriceCoin: AllPriceCoin[] = nameCoins.reduce((acc, el) => {
+    const findCoin = arrAllCoins.filter(({ shopName, name, symbol }) => {
+      if (shopName === 'kucoin' || shopName === 'coinBase') {
+        return symbol === el.symbol;
+      } else {
+        return name === el.name;
+      }
     });
 
     const shops = {
@@ -44,14 +56,22 @@ const getPrice = (nameCoins, arrAllCoins) => {
       Kucoin: null,
       CoinPaprika: null,
     };
-    findCoin.map(({ shop_name, price }) => {
-      let coinPrice;
+    let coinPriceSum: number | null = null;
+    let calc: number | null = null;
+
+    findCoin.map(({ shopName, price }) => {
+      let coinPrice: number;
+
       if (price) {
         coinPrice = price;
+
+        coinPriceSum += price;
+        calc++;
       } else {
         coinPrice = null;
       }
-      switch (shop_name) {
+
+      switch (shopName) {
         case 'coinMarketCap':
           shops.CoinMarketCap = coinPrice;
           break;
@@ -80,16 +100,11 @@ const getPrice = (nameCoins, arrAllCoins) => {
       coinStats: shops.CoinStats,
       kucoin: shops.Kucoin,
       coinPaprika: shops.CoinPaprika,
-      price_average:
-        (shops.CoinMarketCap +
-          shops.CoinBase +
-          shops.CoinStats +
-          shops.Kucoin +
-          shops.CoinPaprika) /
-        5,
+      priceAverage: coinPriceSum / calc,
     });
     return acc;
   }, []);
+  return allPriceCoin;
 };
 
 export default getCurrentPrice;
