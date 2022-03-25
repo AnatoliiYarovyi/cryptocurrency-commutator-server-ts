@@ -1,9 +1,9 @@
 import { Coin } from '../entity/Coin';
 import { EntityManager } from 'typeorm';
 
-import Obj from '../interface/interface';
+import { AllPriceCoin } from '../interface/interface';
 
-const writeData = async (manager: EntityManager, data: Obj) => {
+const writeData = async (manager: EntityManager, data: AllPriceCoin) => {
   try {
     const {
       name,
@@ -13,20 +13,20 @@ const writeData = async (manager: EntityManager, data: Obj) => {
       coinStats,
       kucoin,
       coinPaprika,
-      price_average,
+      priceAverage,
     } = data;
 
     await manager.upsert(
       Coin,
       {
-        cryptocurrensy_name: name,
-        cryptocurrensy_symbol: symbol,
+        cryptocurrensyName: name,
+        cryptocurrensySymbol: symbol,
         coinMarketCap,
         coinBase,
         coinStats,
         kucoin,
         coinPaprika,
-        price_average,
+        priceAverage,
         date: new Date().toISOString(),
       },
       {
@@ -35,7 +35,7 @@ const writeData = async (manager: EntityManager, data: Obj) => {
       },
     );
   } catch (error) {
-    console.log(error);
+    console.error(error);
   }
 };
 
