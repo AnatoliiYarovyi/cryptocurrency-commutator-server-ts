@@ -11,7 +11,7 @@ import getCurrentPrice from './support/getCurrentPrice';
 import writeData from './db/writeData';
 import queryAllCoin from './db/queryAllCoin';
 import queryCoin from './db/queryCoin';
-import Obj from './interface/interface';
+import { AllPriceCoin } from './interface/interface';
 
 const { DB_HOST, DB_USER, DB_USER_PASS, DB_NAME, PORT = 3000 } = process.env;
 
@@ -41,11 +41,11 @@ const index = express();
 index.use(express.json());
 
 // start "cron" --> requests happen every 5 minutes
-const interval: number = 5;
+const interval: number = 1;
 cron.schedule(`*/${interval} * * * *`, async () => {
   try {
-    console.log('running a task every five minutes');
-    const currentPrice: Obj = await getCurrentPrice();
+    console.log('start "cron"');
+    const currentPrice: AllPriceCoin[] = await getCurrentPrice();
     await getWriteCoinDB(currentPrice);
   } catch (error) {
     console.log(error);
@@ -53,9 +53,9 @@ cron.schedule(`*/${interval} * * * *`, async () => {
 });
 
 // write data to DB
-const getWriteCoinDB = async (currentPrice: Obj) => {
+const getWriteCoinDB = async (currentPrice: AllPriceCoin[]) => {
   const manager: EntityManager = await dataSource.manager;
-  currentPrice.map(async (el, i) => {
+  currentPrice.map(async (el: AllPriceCoin) => {
     await writeData(manager, el);
   });
   console.log('Data recording completed!');
@@ -80,7 +80,8 @@ index.get('/coin/', async function (req: Request, res: Response) {
   try {
     const userRepository: Repository<any> = dataSource.getRepository(Coin);
 
-    const { name: symbolCoin, shop: shopCoin } = req.query;
+    const symbolCoin = req.query.name;
+    const shopCoin = req.query.shop;
     const timeInMinutes: number = Number(req.query.timeInMinutes);
     const timeInterval: number = Math.floor(timeInMinutes / interval);
     const data = await queryCoin(
