@@ -1,9 +1,11 @@
+import { Repository } from 'typeorm';
+
 interface Data {
   cryptocurrensySymbol: string;
   priceAverage: string;
 }
 
-const queryAllCoin = async userRepository => {
+const queryAllCoin = async (userRepository: Repository<any>) => {
   try {
     const data: Data[] = await userRepository.find({
       select: {
